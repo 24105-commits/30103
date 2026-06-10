@@ -363,7 +363,7 @@ document.getElementById("analyzeBtn").addEventListener("click", () => {
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAo_ux68hyhyfbLivMv7FLBHNafo8AEizQ",
@@ -429,6 +429,36 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
 
   } catch (error) {
     alert("로그인 실패 : " + error.message);
+  }
+});
+
+// 병력 Realtime Database 저장
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const user = auth.currentUser;
+
+  if (!user) {
+    alert("로그인 후 병력을 저장할 수 있습니다.");
+    return;
+  }
+
+  const record = {
+    disease: document.getElementById("disease").value,
+    symptom: document.getElementById("symptom").value,
+    date: document.getElementById("date").value,
+    prescription: document.getElementById("prescription").value,
+    hospital: document.getElementById("hospital").value
+  };
+
+  if (!record.disease || !record.date) {
+    alert("병명과 날짜는 필수 입력입니다.");
+    return;
+  }
+
+  try {
+    await push(ref(db, "users/" + user.uid + "/records"), record);
+    alert("병력이 저장되었습니다.");
+  } catch (error) {
+    alert("저장 실패 : " + error.message);
   }
 });
 
