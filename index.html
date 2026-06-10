@@ -46,8 +46,15 @@ document.getElementById("signupBtn").addEventListener("click", () => {
   const password = document.getElementById("password").value;
   
   createUserWithEmailAndPassword(auth, email, password)
-    .then(() => alert("회원가입 성공!"))
-    .catch((error) => alert("회원가입 실패: " + error.message));
+  .then((userCredential) => {
+    console.log("회원가입 성공");
+    console.log(userCredential.user);
+  })
+  .catch((error) => {
+    console.log(error.code);
+    console.log(error.message);
+    alert(error.code);
+  });
 });
 
 // 6. 로그인 기능
