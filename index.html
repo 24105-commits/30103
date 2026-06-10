@@ -6,103 +6,813 @@
 <title>AI 건강기록 관리 시스템</title>
 
 <style>
-body{
-    font-family:Arial,sans-serif;
-    max-width:1000px;
-    margin:auto;
-    padding:20px;
-    background:#f5f7fa;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
 }
 
-h1{
+body{
+    background:linear-gradient(135deg,#dbeafe,#eff6ff);
+    min-height:100vh;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.title{
     text-align:center;
+    color:#1e40af;
+    margin-bottom:30px;
 }
 
 .card{
     background:white;
-    padding:15px;
-    margin:10px 0;
-    border-radius:10px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
-input{
+h2{
+    margin-bottom:15px;
+    color:#1e3a8a;
+}
+
+input,
+textarea{
     width:100%;
-    padding:10px;
-    margin:5px 0;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+}
+
+textarea{
+    resize:none;
+    height:120px;
 }
 
 button{
-    padding:10px 20px;
-    margin:5px;
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
     cursor:pointer;
+    margin:5px;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.btn-group{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.profile-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+.info-box{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:12px;
+}
+
+#historyList{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:15px;
+}
+
+.history-card{
+    background:#f8fafc;
+    border-radius:15px;
+    padding:15px;
 }
 
 #aiResult{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:12px;
+    min-height:100px;
     white-space:pre-wrap;
 }
+
 </style>
 </head>
 <body>
 
-<h1>🏥 AI 건강기록 관리 시스템</h1>
+<div class="container">
 
-<div class="card">
-<h2>로그인</h2>
+    <h1 class="title">
+        🏥 AI 건강기록 관리 시스템
+    </h1>
 
-<input type="email" id="email" placeholder="이메일">
+    <!-- 로그인 -->
 
-<input type="password" id="password" placeholder="비밀번호">
+    <div class="card">
 
-<button onclick="signup()">회원가입</button>
-<button onclick="login()">로그인</button>
+        <h2>🔐 로그인</h2>
 
-<p id="userInfo"></p>
+        <input
+            type="email"
+            id="email"
+            placeholder="이메일">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="비밀번호">
+
+        <div class="btn-group">
+
+            <button id="signupBtn">
+                회원가입
+            </button>
+
+            <button id="loginBtn">
+                로그인
+            </button>
+
+            <button id="logoutBtn">
+                로그아웃
+            </button>
+
+        </div>
+
+        <p id="userInfo">
+            로그인되지 않음
+        </p>
+
+    </div>
+
+    <!-- 내 정보 -->
+
+    <div class="card">
+
+        <h2>👤 내 정보</h2>
+
+        <div class="profile-grid">
+
+            <div class="info-box">
+                <strong>사용자</strong>
+                <p id="userName">
+                    사용자 정보
+                </p>
+            </div>
+
+            <div class="info-box">
+                <strong>총 방문 횟수</strong>
+                <p id="visitCount">
+                    0회
+                </p>
+            </div>
+
+            <div class="info-box">
+                <strong>최근 방문일</strong>
+                <p id="recentVisit">
+                    없음
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 병력 등록 -->
+
+    <div class="card">
+
+        <h2>➕ 병력 등록</h2>
+
+        <input
+            type="date"
+            id="date">
+
+        <input
+            type="text"
+            id="disease"
+            placeholder="병명">
+
+        <textarea
+            id="symptom"
+            placeholder="증상 입력"></textarea>
+
+        <input
+            type="text"
+            id="prescription"
+            placeholder="처방 내용">
+
+        <input
+            type="text"
+            id="hospital"
+            placeholder="병원명">
+
+        <button id="saveBtn">
+            저장하기
+        </button>
+
+    </div>
+
+    <!-- 병력 목록 -->
+
+    <div class="card">
+
+        <h2>📋 내 병력</h2>
+
+        <button id="loadBtn">
+            병력 불러오기
+        </button>
+
+        <div id="historyList">
+
+            <div class="history-card">
+
+                <h3>감기</h3>
+
+                <p>📅 발병 시기 : 2026-06-10</p>
+
+                <p>🤒 증상 : 기침, 발열</p>
+
+                <p>💊 처방 : 해열제</p>
+
+                <p>🏥 병원 : 울산병원</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- AI 분석 -->
+
+    <div class="card">
+
+        <h2>🤖 AI 건강 분석</h2>
+
+        <button id="analyzeBtn">
+            AI 분석하기
+        </button>
+
+        <button id="ttsBtn">
+            🔊 읽어주기
+        </button>
+
+        <div id="aiResult">
+            AI 분석 결과가 여기에 표시됩니다.
+        </div>
+
+    </div>
+
 </div>
 
-<div class="card">
-<h2>내 병력 조회</h2>
+<script>
 
-<button onclick="loadHistory()">병력 불러오기</button>
+// 현재는 화면 테스트용
 
-<div id="history"></div>
+document
+.getElementById("loginBtn")
+.addEventListener("click",()=>{
+
+    const email =
+    document.getElementById("email").value;
+
+    document.getElementById("userInfo").textContent =
+    "로그인됨 : " + email;
+
+    document.getElementById("userName").textContent =
+    email;
+
+});
+
+document
+.getElementById("logoutBtn")
+.addEventListener("click",()=>{
+
+    document.getElementById("userInfo").textContent =
+    "로그인되지 않음";
+
+    document.getElementById("userName").textContent =
+    "사용자 정보";
+
+});
+
+document
+.getElementById("ttsBtn")
+.addEventListener("click",()=>{
+
+    const text =
+    document.getElementById("aiResult").innerText;
+
+    const utterance =
+    new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "ko-KR";
+
+    speechSynthesis.speak(utterance);
+
+});
+
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 건강기록 관리 시스템</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#dbeafe,#eff6ff);
+    min-height:100vh;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.title{
+    text-align:center;
+    color:#1e40af;
+    margin-bottom:30px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+h2{
+    margin-bottom:15px;
+    color:#1e3a8a;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+}
+
+textarea{
+    resize:none;
+    height:120px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    margin:5px;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.btn-group{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.profile-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+.info-box{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:12px;
+}
+
+#historyList{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:15px;
+}
+
+.history-card{
+    background:#f8fafc;
+    border-radius:15px;
+    padding:15px;
+}
+
+#aiResult{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:12px;
+    min-height:100px;
+    white-space:pre-wrap;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="title">
+        🏥 AI 건강기록 관리 시스템
+    </h1>
+
+    <!-- 로그인 -->
+
+    <div class="card">
+
+        <h2>🔐 로그인</h2>
+
+        <input
+            type="email"
+            id="email"
+            placeholder="이메일">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="비밀번호">
+
+        <div class="btn-group">
+
+            <button id="signupBtn">
+                회원가입
+            </button>
+
+            <button id="loginBtn">
+                로그인
+            </button>
+
+            <button id="logoutBtn">
+                로그아웃
+            </button>
+
+        </div>
+
+        <p id="userInfo">
+            로그인되지 않음
+        </p>
+
+    </div>
+
+    <!-- 내 정보 -->
+
+    <div class="card">
+
+        <h2>👤 내 정보</h2>
+
+        <div class="profile-grid">
+
+            <div class="info-box">
+                <strong>사용자</strong>
+                <p id="userName">
+                    사용자 정보
+                </p>
+            </div>
+
+            <div class="info-box">
+                <strong>총 방문 횟수</strong>
+                <p id="visitCount">
+                    0회
+                </p>
+            </div>
+
+            <div class="info-box">
+                <strong>최근 방문일</strong>
+                <p id="recentVisit">
+                    없음
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 병력 등록 -->
+
+    <div class="card">
+
+        <h2>➕ 병력 등록</h2>
+
+        <input
+            type="date"
+            id="date">
+
+        <input
+            type="text"
+            id="disease"
+            placeholder="병명">
+
+        <textarea
+            id="symptom"
+            placeholder="증상 입력"></textarea>
+
+        <input
+            type="text"
+            id="prescription"
+            placeholder="처방 내용">
+
+        <input
+            type="text"
+            id="hospital"
+            placeholder="병원명">
+
+        <button id="saveBtn">
+            저장하기
+        </button>
+
+    </div>
+
+    <!-- 병력 목록 -->
+
+    <div class="card">
+
+        <h2>📋 내 병력</h2>
+
+        <button id="loadBtn">
+            병력 불러오기
+        </button>
+
+        <div id="historyList">
+
+            <div class="history-card">
+
+                <h3>감기</h3>
+
+                <p>📅 발병 시기 : 2026-06-10</p>
+
+                <p>🤒 증상 : 기침, 발열</p>
+
+                <p>💊 처방 : 해열제</p>
+
+                <p>🏥 병원 : 울산병원</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- AI 분석 -->
+
+    <div class="card">
+
+        <h2>🤖 AI 건강 분석</h2>
+
+        <button id="analyzeBtn">
+            AI 분석하기
+        </button>
+
+        <button id="ttsBtn">
+            🔊 읽어주기
+        </button>
+
+        <div id="aiResult">
+            AI 분석 결과가 여기에 표시됩니다.
+        </div>
+
+    </div>
+
 </div>
 
-<div class="card">
-<h2>AI 건강 분석</h2>
+<script>
 
-<button onclick="analyzeHealth()">
-AI 분석하기
-</button>
+// 현재는 화면 테스트용
 
-<button onclick="speakAI()">
-🔊 읽어주기
-</button>
+document
+.getElementById("loginBtn")
+.addEventListener("click",()=>{
 
-<div id="aiResult"></div>
-</div>
+    const email =
+    document.getElementById("email").value;
 
+    document.getElementById("userInfo").textContent =
+    "로그인됨 : " + email;
+
+    document.getElementById("userName").textContent =
+    email;
+
+});
+
+document
+.getElementById("logoutBtn")
+.addEventListener("click",()=>{
+
+    document.getElementById("userInfo").textContent =
+    "로그인되지 않음";
+
+    document.getElementById("userName").textContent =
+    "사용자 정보";
+
+});
+
+document
+.getElementById("ttsBtn")
+.addEventListener("click",()=>{
+
+    const text =
+    document.getElementById("aiResult").innerText;
+
+    const utterance =
+    new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "ko-KR";
+
+    speechSynthesis.speak(utterance);
+
+});
+
+</script>
+
+</body>
+</html>
+<script>
+const records = [];
+
+document.getElementById("saveBtn").addEventListener("click", () => {
+
+  const record = {
+    date: document.getElementById("date").value,
+    disease: document.getElementById("disease").value,
+    symptom: document.getElementById("symptom").value,
+    prescription: document.getElementById("prescription").value,
+    hospital: document.getElementById("hospital").value
+  };
+
+  records.push(record);
+
+  alert("병력이 저장되었습니다.");
+
+  document.getElementById("date").value = "";
+  document.getElementById("disease").value = "";
+  document.getElementById("symptom").value = "";
+  document.getElementById("prescription").value = "";
+  document.getElementById("hospital").value = "";
+
+});
+
+document.getElementById("loadBtn").addEventListener("click", () => {
+
+  let html = "";
+
+  records.forEach(data => {
+
+    html += `
+      <div class="history-card">
+        <h3>${data.disease}</h3>
+
+        <p>📅 발병 시기 : ${data.date}</p>
+
+        <p>🤒 증상 : ${data.symptom}</p>
+
+        <p>💊 처방 : ${data.prescription}</p>
+
+        <p>🏥 병원 : ${data.hospital}</p>
+      </div>
+    `;
+
+  });
+
+  document.getElementById("historyList").innerHTML = html;
+
+  document.getElementById("visitCount").textContent =
+    records.length + "회";
+
+  if (records.length > 0) {
+
+    document.getElementById("recentVisit").textContent =
+      records[records.length - 1].date;
+
+  }
+
+});
+</script>
+<script>
+
+document
+.getElementById("analyzeBtn")
+.addEventListener("click",()=>{
+
+    const cards =
+    document.querySelectorAll(".history-card");
+
+    if(cards.length===0){
+
+        document.getElementById("aiResult")
+        .innerText =
+        "등록된 병력이 없습니다.";
+
+        return;
+    }
+
+    let diseases = [];
+
+    cards.forEach(card=>{
+
+        diseases.push(
+            card.querySelector("h3").innerText
+        );
+
+    });
+
+    let result = "";
+
+    result += "📋 병력 분석 결과\n\n";
+
+    result +=
+    "총 병력 수 : " +
+    diseases.length +
+    "건\n\n";
+
+    result +=
+    "주요 병력 : " +
+    diseases.join(", ") +
+    "\n\n";
+
+    result +=
+    "💡 건강관리 팁\n";
+
+    result +=
+    "- 규칙적인 수면\n";
+
+    result +=
+    "- 충분한 수분 섭취\n";
+
+    result +=
+    "- 정기 건강검진";
+
+    document.getElementById("aiResult")
+    .innerText =
+    result;
+
+});
+
+document
+.getElementById("ttsBtn")
+.addEventListener("click",()=>{
+
+    const text =
+    document.getElementById("aiResult")
+    .innerText;
+
+    const utterance =
+    new SpeechSynthesisUtterance(
+        text
+    );
+
+    utterance.lang =
+    "ko-KR";
+
+    speechSynthesis.speak(
+        utterance
+    );
+
+});
+
+</script>
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import {
-getAuth,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-getFirestore,
-collection,
-query,
-where,
-getDocs
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+/*
+  ↓↓↓ 여기에 네 Firebase 설정 객체를 붙여넣기 ↓↓↓
+*/
 
 const firebaseConfig = {
   apiKey: "AIzaSyAo_ux68hyhyfbLivMv7FLBHNafo8AEizQ",
@@ -115,208 +825,16 @@ const firebaseConfig = {
   measurementId: "G-JCYBBY8H7T"
 };
 
+/*
+  ↑↑↑ 여기까지 ↑↑↑
+*/
+
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-window.signup = async () => {
-
-try{
-
-const email =
-document.getElementById("email").value;
-
-const password =
-document.getElementById("password").value;
-
-await createUserWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-alert("회원가입 성공");
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-};
-
-window.login = async () => {
-
-try{
-
-const email =
-document.getElementById("email").value;
-
-const password =
-document.getElementById("password").value;
-
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-alert("로그인 성공");
-
-}catch(error){
-
-alert(error.message);
-
-}
-
-};
-
-onAuthStateChanged(auth,user=>{
-
-if(user){
-
-document.getElementById("userInfo").innerHTML =
-"로그인됨 : " + user.email;
-
-}
-
-});
-
-window.loadHistory = async () => {
-
-const user = auth.currentUser;
-
-if(!user){
-
-alert("먼저 로그인하세요");
-
-return;
-
-}
-
-const q = query(
-collection(db,"medicalHistory"),
-where("uid","==",user.uid)
-);
-
-const snapshot = await getDocs(q);
-
-let html = "";
-
-snapshot.forEach(doc=>{
-
-const data = doc.data();
-
-html += `
-<div class="card">
-
-<h3>${data.department}</h3>
-
-<p><b>방문일</b> : ${data.date}</p>
-
-<p><b>방문 사유</b> : ${data.reason}</p>
-
-<p><b>처방</b> : ${data.prescription}</p>
-
-</div>
-`;
-
-});
-
-document.getElementById("history").innerHTML =
-html || "병력 데이터가 없습니다.";
-
-};
-
-window.analyzeHealth = async () => {
-
-const records =
-document.getElementById("history").innerText;
-
-if(records.trim()===""){
-
-alert("병력을 먼저 불러오세요");
-
-return;
-
-}
-
-document.getElementById("aiResult").innerText =
-"분석 중...";
-
-try{
-
-const response = await fetch(
-"https://api.openai.com/v1/chat/completions",
-{
-method:"POST",
-
-headers:{
-"Content-Type":"application/json",
-
-"Authorization":
-"Bearer YOUR_OPENAI_API_KEY"
-},
-
-body:JSON.stringify({
-
-model:"gpt-4o-mini",
-
-messages:[
-
-{
-role:"system",
-content:
-"너는 건강기록을 요약하고 건강 상태를 분석하는 AI 도우미다."
-},
-
-{
-role:"user",
-content:
-records
-}
-
-]
-
-})
-}
-);
-
-const result =
-await response.json();
-
-const aiText =
-result.choices[0].message.content;
-
-document.getElementById("aiResult").innerText =
-aiText;
-
-}catch(error){
-
-document.getElementById("aiResult").innerText =
-error.message;
-
-}
-
-};
-
-window.speakAI = () => {
-
-const text =
-document.getElementById("aiResult").innerText;
-
-const utterance =
-new SpeechSynthesisUtterance(text);
-
-utterance.lang = "ko-KR";
-
-speechSynthesis.speak(utterance);
-
-};
+console.log("Firebase 연결 완료");
 
 </script>
-
-</body>
-</html>
