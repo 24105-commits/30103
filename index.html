@@ -1,10 +1,462 @@
-<script type="module">
-// 1. Firebase SDK 라이브러리 로드 (Realtime Database용 변경)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, set, push, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 건강기록 관리 시스템</title>
 
-// 2. Firebase 설정
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#dbeafe,#eff6ff);
+    min-height:100vh;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.title{
+    text-align:center;
+    color:#1e40af;
+    margin-bottom:30px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+h2{
+    margin-bottom:15px;
+    color:#1e3a8a;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+}
+
+textarea{
+    resize:none;
+    height:120px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    margin:5px;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.btn-group{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.profile-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+.info-box{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:12px;
+}
+
+#historyList{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:15px;
+}
+
+.history-card{
+    background:#f8fafc;
+    border-radius:15px;
+    padding:15px;
+}
+
+#aiResult{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:12px;
+    min-height:100px;
+    white-space:pre-wrap;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="title">
+        🏥 AI 건강기록 관리 시스템
+    </h1>
+
+    <!-- 로그인 -->
+
+    <div class="card">
+
+        <h2>🔐 로그인</h2>
+
+        <input
+            type="email"
+            id="email"
+            placeholder="이메일">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="비밀번호">
+
+        <div class="btn-group">
+
+            <button id="signupBtn">
+                회원가입
+            </button>
+
+            <button id="loginBtn">
+                로그인
+            </button>
+
+            <button id="logoutBtn">
+                로그아웃
+            </button>
+
+        </div>
+
+        <p id="userInfo">
+            로그인되지 않음
+        </p>
+
+    </div>
+
+    <!-- 내 정보 -->
+
+    <div class="card">
+
+        <h2>👤 내 정보</h2>
+
+        <div class="profile-grid">
+
+            <div class="info-box">
+                <strong>사용자</strong>
+                <p id="userName">
+                    사용자 정보
+                </p>
+            </div>
+
+            <div class="info-box">
+                <strong>총 방문 횟수</strong>
+                <p id="visitCount">
+                    0회
+                </p>
+            </div>
+
+            <div class="info-box">
+                <strong>최근 방문일</strong>
+                <p id="recentVisit">
+                    없음
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 병력 등록 -->
+
+    <div class="card">
+
+        <h2>➕ 병력 등록</h2>
+
+        <input
+            type="date"
+            id="date">
+
+        <input
+            type="text"
+            id="disease"
+            placeholder="병명">
+
+        <textarea
+            id="symptom"
+            placeholder="증상 입력"></textarea>
+
+        <input
+            type="text"
+            id="prescription"
+            placeholder="처방 내용">
+
+        <input
+            type="text"
+            id="hospital"
+            placeholder="병원명">
+
+        <button id="saveBtn">
+            저장하기
+        </button>
+
+    </div>
+
+    <!-- 병력 목록 -->
+
+    <div class="card">
+
+        <h2>📋 내 병력</h2>
+
+        <button id="loadBtn">
+            병력 불러오기
+        </button>
+
+        <div id="historyList">
+
+            <div class="history-card">
+
+                <h3>감기</h3>
+
+                <p>📅 발병 시기 : 2026-06-10</p>
+
+                <p>🤒 증상 : 기침, 발열</p>
+
+                <p>💊 처방 : 해열제</p>
+
+                <p>🏥 병원 : 울산병원</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- AI 분석 -->
+
+    <div class="card">
+
+        <h2>🤖 AI 건강 분석</h2>
+
+        <button id="analyzeBtn">
+            AI 분석하기
+        </button>
+
+        <button id="ttsBtn">
+            🔊 읽어주기
+        </button>
+
+        <div id="aiResult">
+            AI 분석 결과가 여기에 표시됩니다.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// 현재는 화면 테스트용
+
+document
+.getElementById("loginBtn")
+.addEventListener("click",()=>{
+
+    const email =
+    document.getElementById("email").value;
+
+    document.getElementById("userInfo").textContent =
+    "로그인됨 : " + email;
+
+    document.getElementById("userName").textContent =
+    email;
+
+});
+
+document
+.getElementById("logoutBtn")
+.addEventListener("click",()=>{
+
+    document.getElementById("userInfo").textContent =
+    "로그인되지 않음";
+
+    document.getElementById("userName").textContent =
+    "사용자 정보";
+
+});
+
+document
+.getElementById("ttsBtn")
+.addEventListener("click",()=>{
+
+    const text =
+    document.getElementById("aiResult").innerText;
+
+    const utterance =
+    new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "ko-KR";
+
+    speechSynthesis.speak(utterance);
+
+});
+
+</script>
+
+<script>
+const records = [];
+
+document.getElementById("saveBtn").addEventListener("click", () => {
+
+  const record = {
+    date: document.getElementById("date").value,
+    disease: document.getElementById("disease").value,
+    symptom: document.getElementById("symptom").value,
+    prescription: document.getElementById("prescription").value,
+    hospital: document.getElementById("hospital").value
+  };
+
+  records.push(record);
+
+  alert("병력이 저장되었습니다.");
+
+  document.getElementById("date").value = "";
+  document.getElementById("disease").value = "";
+  document.getElementById("symptom").value = "";
+  document.getElementById("prescription").value = "";
+  document.getElementById("hospital").value = "";
+
+});
+
+document.getElementById("loadBtn").addEventListener("click", () => {
+
+  let html = "";
+
+  records.forEach(data => {
+
+    html += `
+      <div class="history-card">
+        <h3>${data.disease}</h3>
+
+        <p>📅 발병 시기 : ${data.date}</p>
+
+        <p>🤒 증상 : ${data.symptom}</p>
+
+        <p>💊 처방 : ${data.prescription}</p>
+
+        <p>🏥 병원 : ${data.hospital}</p>
+      </div>
+    `;
+
+  });
+
+  document.getElementById("historyList").innerHTML = html;
+
+  document.getElementById("visitCount").textContent =
+    records.length + "회";
+
+  if (records.length > 0) {
+
+    document.getElementById("recentVisit").textContent =
+      records[records.length - 1].date;
+
+  }
+
+});
+</script>
+
+<script>
+
+document
+.getElementById("analyzeBtn")
+.addEventListener("click",()=>{
+
+    const cards =
+    document.querySelectorAll(".history-card");
+
+    if(cards.length===0){
+
+        document.getElementById("aiResult")
+        .innerText =
+        "등록된 병력이 없습니다.";
+
+        return;
+    }
+
+    let diseases = [];
+
+    cards.forEach(card=>{
+
+        diseases.push(
+            card.querySelector("h3").innerText
+        );
+
+    });
+
+    let result = "";
+
+    result += "📋 병력 분석 결과\n\n";
+
+    result +=
+    "총 병력 수 : " +
+    diseases.length +
+    "건\n\n";
+
+    result +=
+    "주요 병력 : " +
+    diseases.join(", ") +
+    "\n\n";
+
+    result +=
+    "💡 건강관리 팁\n";
+
+    result +=
+    "- 규칙적인 수면\n";
+
+    result +=
+    "- 충분한 수분 섭취\n";
+
+    result +=
+    "- 정기 건강검진";
+
+    document.getElementById("aiResult")
+    .innerText =
+    result;
+
+});
+
+</script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAo_ux68hyhyfbLivMv7FLBHNafo8AEizQ",
   authDomain: "test-7b0db.firebaseapp.com",
@@ -16,153 +468,15 @@ const firebaseConfig = {
   measurementId: "G-JCYBBY8H7T"
 };
 
-// 3. Firebase 초기화
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
-const db = getDatabase(app); // Realtime Database 사용
 
-let currentUser = null;
+const db = getFirestore(app);
 
-// 4. 회원 상태 감지 (로그인 여부 확인)
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUser = user;
-    document.getElementById("userInfo").textContent = "로그인됨 : " + user.email;
-    document.getElementById("userName").textContent = user.email;
-    loadRecords(); // 로그인 시 자동으로 데이터 불러오기
-  } else {
-    currentUser = null;
-    document.getElementById("userInfo").textContent = "로그인되지 않음";
-    document.getElementById("userName").textContent = "사용자 정보";
-    document.getElementById("historyList").innerHTML = ""; // 로그아웃 시 목록 비우기
-    document.getElementById("visitCount").textContent = "0회";
-    document.getElementById("recentVisit").textContent = "없음";
-  }
-});
+console.log("Firebase 연결 완료");
 
-// 5. 회원가입 기능
-createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    console.log("회원가입 성공");
-    console.log(userCredential.user);
-  })
-  .catch((error) => {
-    console.log(error.code);
-    console.log(error.message);
-    alert(error.code);
-  });
-// 6. 로그인 기능
-document.getElementById("loginBtn").addEventListener("click", () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => alert("로그인 성공!"))
-    .catch((error) => alert("로그인 실패: " + error.message));
-});
-
-// 7. 로그아웃 기능
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  signOut(auth).then(() => alert("로그아웃 되었습니다."));
-});
-
-// 8. 병력 데이터 파이어베이스에 저장하기
-document.getElementById("saveBtn").addEventListener("click", () => {
-  if (!currentUser) {
-    alert("로그인이 필요한 서비스입니다.");
-    return;
-  }
-
-  // 사용자 UID별로 경로를 생성하여 프라이버시 보호
-  const userRecordsRef = ref(db, 'users/' + currentUser.uid + '/records');
-  const newRecordRef = push(userRecordsRef); // 고유 키 생성
-
-  const record = {
-    date: document.getElementById("date").value,
-    disease: document.getElementById("disease").value,
-    symptom: document.getElementById("symptom").value,
-    prescription: document.getElementById("prescription").value,
-    hospital: document.getElementById("hospital").value
-  };
-
-  set(newRecordRef, record)
-    .then(() => {
-      alert("파이어베이스에 병력이 안전하게 저장되었습니다!");
-      // 입력창 초기화
-      document.getElementById("date").value = "";
-      document.getElementById("disease").value = "";
-      document.getElementById("symptom").value = "";
-      document.getElementById("prescription").value = "";
-      document.getElementById("hospital").value = "";
-      
-      loadRecords(); // 저장 후 목록 갱신
-    })
-    .catch((error) => alert("저장 실패: " + error.message));
-});
-
-// 9. 파이어베이스에서 데이터 불러오기 함수
-function loadRecords() {
-  if (!currentUser) return;
-
-  const userRecordsRef = ref(db, 'users/' + currentUser.uid + '/records');
-  
-  get(userRecordsRef).then((snapshot) => {
-    let html = "";
-    let count = 0;
-    let lastDate = "없음";
-
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      
-      // 파이어베이스 객체를 배열 형태로 변환하여 처리
-      Object.keys(data).forEach((key) => {
-        const record = data[key];
-        count++;
-        lastDate = record.date; // 마지막 데이터의 날짜
-
-        html += `
-          <div class="history-card">
-            <h3>${record.disease}</h3>
-            <p>📅 발병 시기 : ${record.date}</p>
-            <p>🤒 증상 : ${record.symptom}</p>
-            <p>💊 처방 : ${record.prescription}</p>
-            <p>🏥 병원 : ${record.hospital}</p>
-          </div>
-        `;
-      });
-    } else {
-      html = "<p style='padding:15px;'>등록된 병력이 없습니다.</p>";
-    }
-
-    document.getElementById("historyList").innerHTML = html;
-    document.getElementById("visitCount").textContent = count + "회";
-    document.getElementById("recentVisit").textContent = lastDate;
-  }).catch((error) => console.error("데이터 로드 실패:", error));
-}
-
-// 불러오기 버튼에도 함수 연결
-document.getElementById("loadBtn").addEventListener("click", loadRecords);
-
-// 10. AI 분석 기능 (기존 로직 유지)
-document.getElementById("analyzeBtn").addEventListener("click", () => {
-  const cards = document.querySelectorAll(".history-card h3");
-  if (cards.length === 0 || cards[0].innerText === "") {
-    document.getElementById("aiResult").innerText = "등록된 병력이 없습니다.";
-    return;
-  }
-
-  let diseases = [];
-  cards.forEach(h3 => diseases.push(h3.innerText));
-
-  let result = `📋 병력 분석 결과\n\n총 병력 수 : ${diseases.length}건\n\n주요 병력 : ${diseases.join(", ")}\n\n💡 건강관리 팁\n- 규칙적인 수면\n- 충분한 수분 섭취\n- 정기 건강검진`;
-  document.getElementById("aiResult").innerText = result;
-});
-
-// 11. TTS 읽어주기 기능 (기존 로직 유지)
-document.getElementById("ttsBtn").addEventListener("click", () => {
-  const text = document.getElementById("aiResult").innerText;
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "ko-KR";
-  speechSynthesis.speak(utterance);
-});
 </script>
+
+</body>
+</html>
