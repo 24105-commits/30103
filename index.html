@@ -4,180 +4,224 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 건강기록 관리 시스템</title>
-
 <style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
+body {
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  min-height: 100vh;
+  padding: 30px;
 }
 
-body{
-    background:linear-gradient(135deg,#dbeafe,#eff6ff);
-    min-height:100vh;
-    padding:30px;
+.container { max-width: 1200px; margin: auto; }
+
+.title {
+  text-align: center;
+  color: #1e40af;
+  margin-bottom: 30px;
+  font-size: 2rem;
 }
 
-.container{
-    max-width:1200px;
-    margin:auto;
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
 }
 
-.title{
-    text-align:center;
-    color:#1e40af;
-    margin-bottom:30px;
+h2 { margin-bottom: 15px; color: #1e3a8a; }
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
 }
 
-.card{
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    margin-bottom:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
+textarea { resize: none; height: 120px; }
+
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  margin: 5px;
+  font-size: 14px;
+  transition: background 0.2s;
 }
 
-h2{
-    margin-bottom:15px;
-    color:#1e3a8a;
+button:hover { background: #1d4ed8; }
+button:disabled { background: #93c5fd; cursor: not-allowed; }
+
+.btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
 }
 
-input,
-textarea{
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border:1px solid #d1d5db;
-    border-radius:10px;
+.info-box {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 12px;
 }
 
-textarea{
-    resize:none;
-    height:120px;
+#historyList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
 }
 
-button{
-    padding:12px 20px;
-    border:none;
-    border-radius:10px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-    margin:5px;
+.history-card {
+  background: #f8fafc;
+  border-radius: 15px;
+  padding: 15px;
+  border-left: 4px solid #3b82f6;
 }
 
-button:hover{
-    background:#1d4ed8;
+.history-card h3 { color: #1e3a8a; margin-bottom: 8px; }
+.history-card p { color: #374151; font-size: 14px; margin-bottom: 4px; }
+
+/* AI 결과 영역 */
+#aiResult {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  min-height: 120px;
+  white-space: pre-wrap;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #1f2937;
 }
 
-.btn-group{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
+/* 섹션별 색상 카드 */
+.ai-section {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  border-left: 5px solid #3b82f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-.profile-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:15px;
+.ai-section.risk { border-left-color: #ef4444; }
+.ai-section.tip  { border-left-color: #10b981; }
+.ai-section.food { border-left-color: #f59e0b; }
+.ai-section.exercise { border-left-color: #8b5cf6; }
+.ai-section.checkup  { border-left-color: #06b6d4; }
+.ai-section.summary  { border-left-color: #64748b; }
+
+.ai-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1e3a8a;
 }
 
-.info-box{
-    background:#f8fafc;
-    padding:15px;
-    border-radius:12px;
+.ai-section p, .ai-section li {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
 }
 
-#historyList{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:15px;
-    margin-top:15px;
+.ai-section ul { padding-left: 18px; }
+
+.loading-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #bfdbfe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
 }
 
-.history-card{
-    background:#f8fafc;
-    border-radius:15px;
-    padding:15px;
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-#aiResult{
-    background:#f8fafc;
-    padding:15px;
-    border-radius:12px;
-    min-height:100px;
-    white-space:pre-wrap;
-}
+.ai-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
 
+.question-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
 
-    <h1 class="title">
-        🏥 AI 건강기록 관리 시스템
-    </h1>
+  <h1 class="title">🏥 AI 건강기록 관리 시스템</h1>
 
-    <!-- 로그인 -->
-    <div class="card">
-        <h2>🔐 로그인</h2>
-        <input type="email" id="email" placeholder="이메일">
-        <input type="password" id="password" placeholder="비밀번호">
-        <div class="btn-group">
-            <button id="signupBtn">회원가입</button>
-            <button id="loginBtn">로그인</button>
-            <button id="logoutBtn">로그아웃</button>
-        </div>
-        <p id="userInfo">로그인되지 않음</p>
+  <!-- 로그인 -->
+  <div class="card">
+    <h2>🔐 로그인</h2>
+    <input type="email" id="email" placeholder="이메일">
+    <input type="password" id="password" placeholder="비밀번호">
+    <div class="btn-group">
+      <button id="signupBtn">회원가입</button>
+      <button id="loginBtn">로그인</button>
+      <button id="logoutBtn">로그아웃</button>
     </div>
+    <p id="userInfo" style="margin-top:10px;color:#6b7280;">로그인되지 않음</p>
+  </div>
 
-    <!-- 내 정보 -->
-    <div class="card">
-        <h2>👤 내 정보</h2>
-        <div class="profile-grid">
-            <div class="info-box">
-                <strong>사용자</strong>
-                <p id="userName">사용자 정보</p>
-            </div>
-            <div class="info-box">
-                <strong>총 방문 횟수</strong>
-                <p id="visitCount">0회</p>
-            </div>
-            <div class="info-box">
-                <strong>최근 방문일</strong>
-                <p id="recentVisit">없음</p>
-            </div>
-        </div>
+  <!-- 내 정보 -->
+  <div class="card">
+    <h2>👤 내 정보</h2>
+    <div class="profile-grid">
+      <div class="info-box"><strong>사용자</strong><p id="userName">사용자 정보</p></div>
+      <div class="info-box"><strong>총 방문 횟수</strong><p id="visitCount">0회</p></div>
+      <div class="info-box"><strong>최근 방문일</strong><p id="recentVisit">없음</p></div>
     </div>
+  </div>
 
-    <!-- 병력 등록 -->
-    <div class="card">
-        <h2>➕ 병력 등록</h2>
-        <input type="date" id="date">
-        <input type="text" id="disease" placeholder="병명">
-        <textarea id="symptom" placeholder="증상 입력"></textarea>
-        <input type="text" id="prescription" placeholder="처방 내용">
-        <input type="text" id="hospital" placeholder="병원명">
-        <button id="saveBtn">저장하기</button>
-    </div>
+  <!-- 병력 등록 -->
+  <div class="card">
+    <h2>➕ 병력 등록</h2>
+    <input type="date" id="date">
+    <input type="text" id="disease" placeholder="병명">
+    <textarea id="symptom" placeholder="증상 입력"></textarea>
+    <input type="text" id="prescription" placeholder="처방 내용">
+    <input type="text" id="hospital" placeholder="병원명">
+    <button id="saveBtn">저장하기</button>
+  </div>
 
-    <!-- 병력 목록 -->
-    <div class="card">
-        <h2>📋 내 병력</h2>
-        <button id="loadBtn">병력 불러오기</button>
-        <div id="historyList"></div>
-    </div>
+  <!-- 병력 목록 -->
+  <div class="card">
+    <h2>📋 내 병력</h2>
+    <button id="loadBtn">병력 불러오기</button>
+    <div id="historyList"></div>
+  </div>
 
-    <!-- AI 분석 -->
-    <div class="card">
-        <h2>🤖 AI 건강 분석</h2>
-        <button id="analyzeBtn">AI 분석하기</button>
-        <button id="ttsBtn">🔊 읽어주기</button>
-        <div id="aiResult">AI 분석 결과가 여기에 표시됩니다.</div>
+  <!-- AI 분석 -->
+  <div class="card">
+    <h2>🤖 AI 건강 분석</h2>
+    <div class="ai-controls">
+      <button id="analyzeBtn">📊 종합 분석</button>
+      <button id="riskBtn">⚠️ 위험 요인 분석</button>
+      <button id="dietBtn">🥗 맞춤 식단 추천</button>
+      <button id="exerciseBtn">🏃 운동 계획 추천</button>
+      <button id="ttsBtn">🔊 읽어주기</button>
     </div>
+    <div style="display:flex;gap:8px;margin-bottom:15px;">
+      <input type="text" class="question-input" id="customQuestion" placeholder="AI에게 질문하기 (예: 이 병력으로 주의해야 할 계절은?)">
+      <button id="askBtn">질문하기</button>
+    </div>
+    <div id="aiResult">AI 분석 결과가 여기에 표시됩니다.</div>
+  </div>
 
 </div>
 
@@ -202,18 +246,245 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-console.log("Firebase 연결 완료");
-
-// ──────────────────────────────
-// 공통 유틸: 병력에서 마지막 날짜 계산
-// ──────────────────────────────
+// ── 유틸 ──
 function getLastDate(records) {
-  const dates = records.map(r => r.date).filter(d => !!d).sort();
+  const dates = records.map(r => r.date).filter(Boolean).sort();
   return dates.length > 0 ? dates[dates.length - 1] : null;
 }
 
+function getRecordsFromCards() {
+  const cards = document.querySelectorAll(".history-card");
+  const records = [];
+  cards.forEach(card => {
+    records.push({
+      disease: card.querySelector("h3")?.innerText || "",
+      date:    card.querySelector(".rec-date")?.innerText?.replace("📅 발병 시기 : ","") || "",
+      symptom: card.querySelector(".rec-symptom")?.innerText?.replace("🤒 증상 : ","") || "",
+      prescription: card.querySelector(".rec-presc")?.innerText?.replace("💊 처방 : ","") || "",
+      hospital: card.querySelector(".rec-hosp")?.innerText?.replace("🏥 병원 : ","") || ""
+    });
+  });
+  return records;
+}
+
+// ── 병력 요약 텍스트 생성 ──
+function buildRecordsSummary(records) {
+  if (!records.length) return null;
+  return records.map((r, i) =>
+    `[${i+1}] 병명: ${r.disease} / 날짜: ${r.date} / 증상: ${r.symptom} / 처방: ${r.prescription} / 병원: ${r.hospital}`
+  ).join("\n");
+}
+
+// ── Claude API 호출 ──
+async function callClaude(prompt) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+  const data = await res.json();
+  return data.content?.map(b => b.text || "").join("") || "응답을 받을 수 없습니다.";
+}
+
+// ── AI 결과 렌더링 ──
+function renderLoading() {
+  document.getElementById("aiResult").innerHTML =
+    `<span class="loading-spinner"></span> AI가 분석 중입니다...`;
+}
+
+function renderText(text) {
+  // 섹션 파싱: "## 제목" 또는 "**제목**" 스타일을 카드로 변환
+  const sectionKeywords = {
+    "위험": "risk", "주의": "risk", "경고": "risk",
+    "팁": "tip", "조언": "tip", "권고": "tip",
+    "식단": "food", "음식": "food", "영양": "food",
+    "운동": "exercise", "활동": "exercise",
+    "검진": "checkup", "병원": "checkup", "검사": "checkup",
+    "요약": "summary", "종합": "summary", "결론": "summary"
+  };
+
+  // 줄 기반으로 섹션 분리
+  const lines = text.split("\n");
+  let sections = [];
+  let currentTitle = "";
+  let currentClass = "summary";
+  let currentLines = [];
+
+  const flush = () => {
+    const content = currentLines.join("\n").trim();
+    if (content) sections.push({ title: currentTitle, cls: currentClass, content });
+    currentLines = [];
+  };
+
+  lines.forEach(line => {
+    const headerMatch = line.match(/^#{1,3}\s+(.+)/) || line.match(/^\*\*(.+)\*\*\s*$/);
+    if (headerMatch) {
+      flush();
+      currentTitle = headerMatch[1];
+      currentClass = "summary";
+      for (const [kw, cls] of Object.entries(sectionKeywords)) {
+        if (currentTitle.includes(kw)) { currentClass = cls; break; }
+      }
+    } else {
+      currentLines.push(line);
+    }
+  });
+  flush();
+
+  if (sections.length === 0) {
+    // 섹션 구분 없이 그냥 텍스트
+    document.getElementById("aiResult").innerHTML =
+      `<div class="ai-section"><p>${text.replace(/\n/g, "<br>")}</p></div>`;
+    return;
+  }
+
+  let html = "";
+  sections.forEach(s => {
+    const bodyLines = s.content.split("\n").filter(l => l.trim());
+    const bodyHtml = bodyLines.map(l => {
+      const bullet = l.match(/^[-•*]\s+(.+)/);
+      return bullet ? `<li>${bullet[1]}</li>` : `<p>${l}</p>`;
+    }).join("");
+    const hasBullets = bodyLines.some(l => l.match(/^[-•*]\s+/));
+    html += `
+      <div class="ai-section ${s.cls}">
+        ${s.title ? `<div class="ai-section-title">${s.title}</div>` : ""}
+        ${hasBullets ? `<ul>${bodyHtml}</ul>` : bodyHtml}
+      </div>`;
+  });
+
+  document.getElementById("aiResult").innerHTML = html;
+}
+
+function disableButtons(state) {
+  ["analyzeBtn","riskBtn","dietBtn","exerciseBtn","askBtn"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = state;
+  });
+}
+
+async function runAnalysis(promptFn) {
+  const records = getRecordsFromCards();
+  if (records.length === 0) {
+    document.getElementById("aiResult").innerText = "먼저 병력을 불러와 주세요.";
+    return;
+  }
+  const summary = buildRecordsSummary(records);
+  renderLoading();
+  disableButtons(true);
+  try {
+    const text = await callClaude(promptFn(summary));
+    renderText(text);
+  } catch (e) {
+    document.getElementById("aiResult").innerText = "오류가 발생했습니다: " + e.message;
+  } finally {
+    disableButtons(false);
+  }
+}
+
+// ── 버튼 이벤트들 ──
+
+// 종합 분석
+document.getElementById("analyzeBtn").addEventListener("click", () => {
+  runAnalysis(summary => `
+다음은 환자의 병력 정보입니다:
+${summary}
+
+이 병력 데이터를 바탕으로 아래 항목을 한국어로 분석해 주세요.
+각 항목은 ## 제목 형식으로 구분해 주세요.
+
+## 종합 요약
+## 주요 건강 패턴
+## 위험 요인 및 주의사항
+## 생활 습관 개선 팁
+## 권장 추적 관리 항목
+
+의료 전문가 상담을 대체하지 않음을 명시해 주세요.
+  `.trim());
+});
+
+// 위험 요인 분석
+document.getElementById("riskBtn").addEventListener("click", () => {
+  runAnalysis(summary => `
+다음 병력을 바탕으로 한국어로 건강 위험 요인을 심층 분석해 주세요:
+${summary}
+
+## 주요 위험 요인
+## 합병증 가능성
+## 경고 신호 (즉시 병원 방문 필요한 증상들)
+## 예방을 위한 핵심 행동
+  `.trim());
+});
+
+// 식단 추천
+document.getElementById("dietBtn").addEventListener("click", () => {
+  runAnalysis(summary => `
+다음 병력을 가진 환자에게 맞춤형 식단을 한국어로 추천해 주세요:
+${summary}
+
+## 권장 식품 목록
+## 피해야 할 식품
+## 하루 식단 예시
+## 영양 섭취 핵심 포인트
+  `.trim());
+});
+
+// 운동 계획
+document.getElementById("exerciseBtn").addEventListener("click", () => {
+  runAnalysis(summary => `
+다음 병력을 가진 환자에게 맞춤형 운동 계획을 한국어로 추천해 주세요:
+${summary}
+
+## 적합한 운동 종류
+## 피해야 할 운동
+## 주간 운동 계획 예시
+## 운동 시 주의사항
+  `.trim());
+});
+
+// 자유 질문
+document.getElementById("askBtn").addEventListener("click", async () => {
+  const question = document.getElementById("customQuestion").value.trim();
+  if (!question) { alert("질문을 입력해 주세요."); return; }
+
+  const records = getRecordsFromCards();
+  const summary = records.length > 0 ? buildRecordsSummary(records) : "병력 정보 없음";
+
+  renderLoading();
+  disableButtons(true);
+  try {
+    const prompt = `
+다음은 환자의 병력입니다:
+${summary}
+
+질문: ${question}
+
+한국어로 친절하고 구체적으로 답변해 주세요.
+각 항목은 ## 제목 형식으로 구분해 주세요.
+    `.trim();
+    const text = await callClaude(prompt);
+    renderText(text);
+  } catch (e) {
+    document.getElementById("aiResult").innerText = "오류: " + e.message;
+  } finally {
+    disableButtons(false);
+  }
+});
+
+// TTS
+document.getElementById("ttsBtn").addEventListener("click", () => {
+  const text = document.getElementById("aiResult").innerText;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "ko-KR";
+  speechSynthesis.speak(utterance);
+});
+
 // ──────────────────────────────
-// 로그인 성공 시 공통 처리
+// Firebase: 공통
 // ──────────────────────────────
 async function onLoginSuccess(user) {
   document.getElementById("userInfo").textContent = "로그인됨 : " + user.email;
@@ -223,63 +494,40 @@ async function onLoginSuccess(user) {
   const snapshot = await get(userRef);
   const data = snapshot.val() || {};
 
-  // 방문횟수 +1
   const newCount = (data.visitCount || 0) + 1;
   await update(userRef, { visitCount: newCount });
   document.getElementById("visitCount").textContent = newCount + "회";
 
-  // 병력 기록 중 마지막 날짜
   const records = data.records ? Object.values(data.records) : [];
-  const lastDate = getLastDate(records);
-  document.getElementById("recentVisit").textContent = lastDate || "없음";
+  document.getElementById("recentVisit").textContent = getLastDate(records) || "없음";
 }
 
-// ──────────────────────────────
-// 회원가입
-// ──────────────────────────────
 document.getElementById("signupBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   if (!email || !password) { alert("이메일과 비밀번호를 입력해주세요."); return; }
-
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    await set(ref(db, "users/" + user.uid), {
-      email: email,
-      createdAt: new Date().toISOString(),
-      visitCount: 1
-    });
+    const uc = await createUserWithEmailAndPassword(auth, email, password);
+    await set(ref(db, "users/" + uc.user.uid), { email, createdAt: new Date().toISOString(), visitCount: 1 });
     alert("회원가입 완료! 이메일 : " + email);
     document.getElementById("userInfo").textContent = "로그인됨 : " + email;
     document.getElementById("userName").textContent = email;
     document.getElementById("visitCount").textContent = "1회";
     document.getElementById("recentVisit").textContent = "없음";
-  } catch (error) {
-    alert("회원가입 실패 : " + error.message);
-  }
+  } catch (e) { alert("회원가입 실패 : " + e.message); }
 });
 
-// ──────────────────────────────
-// 로그인
-// ──────────────────────────────
 document.getElementById("loginBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   if (!email || !password) { alert("이메일과 비밀번호를 입력해주세요."); return; }
-
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    await onLoginSuccess(userCredential.user);
+    const uc = await signInWithEmailAndPassword(auth, email, password);
+    await onLoginSuccess(uc.user);
     alert("로그인 성공!");
-  } catch (error) {
-    alert("로그인 실패 : " + error.message);
-  }
+  } catch (e) { alert("로그인 실패 : " + e.message); }
 });
 
-// ──────────────────────────────
-// 로그아웃
-// ──────────────────────────────
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -290,18 +538,12 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
     document.getElementById("historyList").innerHTML = "";
     document.getElementById("aiResult").innerText = "AI 분석 결과가 여기에 표시됩니다.";
     alert("로그아웃 되었습니다.");
-  } catch (error) {
-    alert("로그아웃 실패 : " + error.message);
-  }
+  } catch (e) { alert("로그아웃 실패 : " + e.message); }
 });
 
-// ──────────────────────────────
-// 병력 저장
-// ──────────────────────────────
 document.getElementById("saveBtn").addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) { alert("로그인 후 병력을 저장할 수 있습니다."); return; }
-
   const record = {
     disease: document.getElementById("disease").value,
     symptom: document.getElementById("symptom").value,
@@ -310,99 +552,42 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     hospital: document.getElementById("hospital").value
   };
   if (!record.disease || !record.date) { alert("병명과 날짜는 필수 입력입니다."); return; }
-
   try {
     await push(ref(db, "users/" + user.uid + "/records"), record);
-
-    // 저장 후 마지막 날짜 즉시 갱신
-    const snapshot = await get(ref(db, "users/" + user.uid + "/records"));
-    const records = snapshot.val() ? Object.values(snapshot.val()) : [];
-    const lastDate = getLastDate(records);
-    document.getElementById("recentVisit").textContent = lastDate || "없음";
-
-    // 입력창 초기화
-    document.getElementById("date").value = "";
-    document.getElementById("disease").value = "";
-    document.getElementById("symptom").value = "";
-    document.getElementById("prescription").value = "";
-    document.getElementById("hospital").value = "";
-
+    const snap = await get(ref(db, "users/" + user.uid + "/records"));
+    const records = snap.val() ? Object.values(snap.val()) : [];
+    document.getElementById("recentVisit").textContent = getLastDate(records) || "없음";
+    ["date","disease","symptom","prescription","hospital"].forEach(id => document.getElementById(id).value = "");
     alert("병력이 저장되었습니다.");
-  } catch (error) {
-    alert("저장 실패 : " + error.message);
-  }
+  } catch (e) { alert("저장 실패 : " + e.message); }
 });
 
-// ──────────────────────────────
-// 병력 불러오기
-// ──────────────────────────────
 document.getElementById("loadBtn").addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) { alert("로그인 후 병력을 불러올 수 있습니다."); return; }
-
   try {
-    const snapshot = await get(ref(db, "users/" + user.uid + "/records"));
-    const data = snapshot.val();
+    const snap = await get(ref(db, "users/" + user.uid + "/records"));
+    const data = snap.val();
     const records = data ? Object.values(data) : [];
-
     if (records.length === 0) {
       document.getElementById("historyList").innerHTML = "<p style='color:#6b7280;margin-top:10px;'>등록된 병력이 없습니다.</p>";
       return;
     }
-
     let html = "";
     records.forEach(r => {
       html += `
         <div class="history-card">
           <h3>${r.disease}</h3>
-          <p>📅 발병 시기 : ${r.date}</p>
-          <p>🤒 증상 : ${r.symptom}</p>
-          <p>💊 처방 : ${r.prescription}</p>
-          <p>🏥 병원 : ${r.hospital}</p>
-        </div>
-      `;
+          <p class="rec-date">📅 발병 시기 : ${r.date}</p>
+          <p class="rec-symptom">🤒 증상 : ${r.symptom}</p>
+          <p class="rec-presc">💊 처방 : ${r.prescription}</p>
+          <p class="rec-hosp">🏥 병원 : ${r.hospital}</p>
+        </div>`;
     });
     document.getElementById("historyList").innerHTML = html;
-  } catch (error) {
-    alert("불러오기 실패 : " + error.message);
-  }
-});
-
-// ──────────────────────────────
-// AI 분석
-// ──────────────────────────────
-document.getElementById("analyzeBtn").addEventListener("click", () => {
-  const cards = document.querySelectorAll(".history-card");
-  if (cards.length === 0) {
-    document.getElementById("aiResult").innerText = "먼저 병력을 불러와 주세요.";
-    return;
-  }
-  let diseases = [];
-  cards.forEach(card => {
-    diseases.push(card.querySelector("h3").innerText);
-  });
-  let result = "";
-  result += "📋 병력 분석 결과\n\n";
-  result += "총 병력 수 : " + diseases.length + "건\n\n";
-  result += "주요 병력 : " + diseases.join(", ") + "\n\n";
-  result += "💡 건강관리 팁\n";
-  result += "- 규칙적인 수면\n";
-  result += "- 충분한 수분 섭취\n";
-  result += "- 정기 건강검진";
-  document.getElementById("aiResult").innerText = result;
-});
-
-// ──────────────────────────────
-// TTS
-// ──────────────────────────────
-document.getElementById("ttsBtn").addEventListener("click", () => {
-  const text = document.getElementById("aiResult").innerText;
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "ko-KR";
-  speechSynthesis.speak(utterance);
+  } catch (e) { alert("불러오기 실패 : " + e.message); }
 });
 
 </script>
-
 </body>
 </html>
